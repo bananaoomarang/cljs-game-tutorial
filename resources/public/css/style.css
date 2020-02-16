@@ -1,0 +1,20 @@
+#app {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 50rem;
+}
+
+#pixi-app canvas {
+    display: block;
+    margin: 1rem auto;
+}
+
+.CodeMirror {
+    margin: 1rem 0;
+    padding: 0.25rem;
+    border: 2px solid #ccc;
+}
+
+.compiling-msg {
+    color: #ccc;
+}
