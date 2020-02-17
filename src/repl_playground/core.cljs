@@ -12,7 +12,7 @@
 
 (defn load-fn [opts cb]
   (go
-    (let [path (str "/cljs-lib/" (:path opts) (if (:macros opts) ".clj" ".cljs"))
+    (let [path (str "/cljs_lib/" (:path opts) (if (:macros opts) ".clj" ".cljs"))
           response (<! (http/get path))
           src (:body response)]
       (cb {:lang :clj :source src}))))
@@ -36,7 +36,7 @@
     (reset! code value)
     (compile @code)))
 
-(defn editor [snippet-path]
+(defn editor [snippet-path ]
   (let [root-ref (atom nil)
         mirror (atom nil)]
     (r/create-class
@@ -46,23 +46,28 @@
       (fn []
         (go
           (let [response (<! (http/get snippet-path))]
-            (reset! mirror (js/CodeMirror @root-ref (clj->js {:value (:body response) "mode" "clojure"}))))))
+            (reset! mirror (js/CodeMirror @root-ref
+                                          (clj->js {:value (:body response)
+                                                    :theme "dracula"
+                                                    :mode "clojure"}))))))
 
       :render
       (fn []
         [:div
          [:div {:ref #(reset! root-ref %)}]
-         [:button {:on-click #(update-result @mirror)} "Run"]])})))
+         [:button {:class "btn" :on-click #(update-result @mirror)} "Run"]])})))
 
 (defn result []
   [:div
    (if @compiling
      [:div {:class "compiling-msg"} "Compiling…"]
-     [:div {:class "result"} (str @code-result)])])
+     [:div {:class "compile-result"} (str @code-result)])])
 
 (defn app []
   [:div
-   [editor "/snippets/game.cljs"]
+   [:div {:class "row-wrapper"}
+    [editor "/snippets/game.cljs"]
+    [:div {:id "pixi-app"}]]
    [result]])
 
 (r/render [app] (. js/document getElementById "app"))

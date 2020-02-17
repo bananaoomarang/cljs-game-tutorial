@@ -3,7 +3,7 @@
    [pixi-engine.wrapper :as game]
    [pixi-engine.core :as pixi]))
 
-(defonce pixi-app (pixi/create-application))
+(defonce pixi-app (pixi/create-application {:width 400 :height 400}))
 (defonce stage (.-stage pixi-app))
 (defonce chickadee nil)
 (defonce key-state (atom {}))
@@ -12,15 +12,11 @@
 
 (def sprites {:chickadee "/images/chickadee.png"})
 
-(defn setup []
-  (set! chickadee (create-entity "chickadee" (game/vec2 0 0)))
-  (game/add-entity! stage chickadee))
-
 (defn create-entity
   ([resource-name pos]
    (create-entity resource-name pos {}))
   ([resource-name pos {:keys [vel] :or {:vel (game/vec2 0 0)}}]
-   (atom {:sprite (pixi/create-sprite (pixi/get-resource pixi-app resource-name))
+   (atom {:sprite (pixi/create-sprite (pixi/get-resource pixi-app resource-name) {:scale {:x 0.5 :y 0.5}})
           :x (game/vec-x pos)
           :y (game/vec-y pos)
           :vx (game/vec-x vel)
@@ -41,6 +37,10 @@
         y (.-y sprite)]
     (set! (.-x sprite) (+ x (* dt vx)))
     (set! (.-y sprite) (+ y (* dt vy)))))
+
+(defn setup []
+  (set! chickadee (create-entity "chickadee" (game/vec2 0 0)))
+  (game/add-entity! stage chickadee))
 
 (defn on-keydown [e]
   (let [key (.-key e)]
@@ -77,6 +77,7 @@
 
 (game/init!
  pixi-app
+ "#pixi-app"
  {:sprites sprites
   :update update-game!
   :setup setup

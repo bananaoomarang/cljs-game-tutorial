@@ -1,20 +1,45 @@
 #app {
     margin: 0 auto;
-    width: 100%;
-    max-width: 50rem;
+    padding: 1rem;
 }
 
-#pixi-app canvas {
-    display: block;
-    margin: 1rem auto;
+#pixi-app {
+    margin-left: 1rem;
 }
 
 .CodeMirror {
-    margin: 1rem 0;
     padding: 0.25rem;
-    border: 2px solid #ccc;
 }
 
 .compiling-msg {
     color: #ccc;
+}
+
+.compile-result {
+    color: #111;
+}
+
+.row-wrapper {
+    display: flex;
+}
+
+.btn {
+    background: none;
+    border: 2px solid #111;
+    border-top: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    outline: none;
+
+    transition: background-color 200ms ease-in-out;
+}
+
+.btn::-moz-focus-inner {
+  border: 0;
+}
+
+.btn:hover, .btn:focus {
+    outline: none;
+    background-color: #ccc;
 }

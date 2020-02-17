@@ -11,8 +11,8 @@
 (defn vec-y [v]
   (get v 1))
 
-(defn get-app-element []
-  (. js/document getElementById "pixi-app"))
+(defn get-app-element [selector]
+  (. js/document querySelector selector))
 
 (defn key-subscribe! [on-keydown on-keyup]
   (. js/window addEventListener "keydown" on-keydown false)
@@ -25,10 +25,10 @@
 (defn add-entity! [container entity]
   (pixi/add-child! container (:sprite @entity)))
 
-(defn init! [pixi-app {:keys [sprites setup update on-keydown on-keyup]}]
+(defn init! [pixi-app el-selector {:keys [sprites setup update on-keydown on-keyup]}]
   "Init stuff"
 
-  (. (get-app-element) appendChild (.-view pixi-app))
+  (. (get-app-element el-selector) appendChild (.-view pixi-app))
 
   (load-sprites! pixi-app sprites)
   (key-subscribe! on-keydown on-keyup)
