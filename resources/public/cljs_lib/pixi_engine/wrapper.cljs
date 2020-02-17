@@ -25,8 +25,10 @@
 (defn add-entity! [container entity]
   (pixi/add-child! container (:sprite @entity)))
 
-(defn init! [pixi-app el-selector {:keys [sprites setup update on-keydown on-keyup]}]
+(defn init!
   "Init stuff"
+
+  [pixi-app el-selector {:keys [sprites setup update on-keydown on-keyup]}]
 
   (. (get-app-element el-selector) appendChild (.-view pixi-app))
 
