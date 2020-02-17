@@ -32,6 +32,7 @@
 
   (load-sprites! pixi-app sprites)
   (key-subscribe! on-keydown on-keyup)
+
   (. (.-loader pixi-app) load
      (fn []
        (setup)
