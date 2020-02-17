@@ -22,9 +22,6 @@
   (doseq [[key val] sprites]
     (. (.-loader pixi-app) add (name key) val)))
 
-(defn add-entity! [container entity]
-  (pixi/add-child! container (:sprite @entity)))
-
 (defn init!
   "Init stuff"
 

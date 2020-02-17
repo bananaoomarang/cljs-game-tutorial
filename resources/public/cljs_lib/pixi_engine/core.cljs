@@ -16,8 +16,9 @@
   (let [resources (.. app -loader -resources)]
     (aget resources name)))
 
-(defn create-sprite [resource {:keys [scale]}]
-  (let [sprite (Sprite. (.-texture resource))]
+(defn create-sprite [app resource-key {:keys [scale]}]
+  (let [resource (get-resource app resource-key)
+        sprite (Sprite. (.-texture resource))]
     (when scale
       (set! (.-scale sprite) (clj->js scale)))
     sprite))

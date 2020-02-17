@@ -65,11 +65,15 @@
      [:div {:class "compiling-msg"} "Compiling…"]
      [:div {:class "compile-result"} (str @code-result)])])
 
+(defn row [snippet app-class]
+  [:div {:class "row-wrapper"}
+   [editor (str "/snippets/" snippet ".cljs")]
+   [:div {:id app-class}]])
+
 (defn app []
   [:div
-   [:div {:class "row-wrapper"}
-    [editor "/snippets/game.cljs"]
-    [:div {:id "pixi-app"}]]
+   [row "1" "pixi-app-1"]
+   [row "game" "pixi-app"]
    [result]])
 
 (r/render [app] (. js/document getElementById "app"))

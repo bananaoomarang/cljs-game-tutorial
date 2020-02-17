@@ -1,10 +1,9 @@
-(ns repl-playground.game
+(ns pixi-tutorial-2.game
   (:require
    [pixi-engine.wrapper :as game]
    [pixi-engine.core :as pixi]))
 
 (defonce pixi-app (pixi/create-application {:width 400 :height 400}))
-(defonce stage (.-stage pixi-app))
 (defonce chickadee nil)
 (defonce key-state (atom {}))
 
@@ -16,11 +15,14 @@
   ([resource-name pos]
    (create-entity resource-name pos {}))
   ([resource-name pos {:keys [vel] :or {:vel (game/vec2 0 0)}}]
-   (atom {:sprite (pixi/create-sprite (pixi/get-resource pixi-app resource-name) {:scale {:x 0.5 :y 0.5}})
+   (atom {:sprite (pixi/create-sprite pixi-app resource-name {:scale {:x 0.5 :y 0.5}})
           :x (game/vec-x pos)
           :y (game/vec-y pos)
           :vx (game/vec-x vel)
           :vy (game/vec-y vel)})))
+
+(defn add-entity! [app entity]
+  (pixi/add-child! (.-stage app) (:sprite @entity)))
 
 (defn set-vel-x! [entity v]
   (swap! entity assoc :vx v))
@@ -40,7 +42,7 @@
 
 (defn setup []
   (set! chickadee (create-entity "chickadee" (game/vec2 0 0)))
-  (game/add-entity! stage chickadee))
+  (add-entity! pixi-app chickadee))
 
 (defn on-keydown [e]
   (let [key (.-key e)]
@@ -50,8 +52,10 @@
   (let [key (.-key e)]
     (swap! key-state assoc (keyword key) false)))
 
-(defn update-bird! [dt]
+(defn update-bird!
   "Move the bird if they click the arrows"
+
+  [dt]
 
   (let [ks @key-state
         up (:ArrowUp ks)
@@ -59,15 +63,22 @@
         left (:ArrowLeft ks)
         right (:ArrowRight ks)]
 
-    (if left (set-vel-x! chickadee (* -1 bird-speed)))
-    (if right (set-vel-x! chickadee bird-speed))
-    (if up (set-vel-y! chickadee (* -1 bird-speed)))
-    (if down (set-vel-y! chickadee bird-speed))
+    (when left
+      (set-vel-x! chickadee (* -1 bird-speed)))
 
-    (if (or (and left right) (and (not left) (not right)))
+    (when right
+      (set-vel-x! chickadee bird-speed))
+
+    (when up
+      (set-vel-y! chickadee (* -1 bird-speed)))
+
+    (when down
+      (set-vel-y! chickadee bird-speed))
+
+    (when (or (and left right) (and (not left) (not right)))
       (set-vel-x! chickadee 0))
 
-    (if (or (and up down) (and (not up) (not down)))
+    (when (or (and up down) (and (not up) (not down)))
       (set-vel-y! chickadee 0)))
 
   (update-entity! dt chickadee))
