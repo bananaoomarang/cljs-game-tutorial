@@ -1,6 +1,7 @@
 (ns repl-playground.core
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [cljs.js]
+  (:require [clojure.pprint :refer [pprint]]
+            [cljs.js]
             [cljs.core.async :refer [<!]]
             [cljs-http.client :as http]
             [reagent.core :as r]
@@ -23,7 +24,8 @@
 
 (defn handle-eval [result]
   (reset! compiling false)
-  (reset! code-result (:value result)))
+  (let [printed-result (with-out-str (pprint (:value result)))]
+    (reset! code-result printed-result)))
 
 (defn compile [str]
   (cljs.js/eval-str comp-state str "random-name" {:load load-fn} handle-eval))
