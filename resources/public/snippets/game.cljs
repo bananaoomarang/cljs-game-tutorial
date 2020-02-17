@@ -3,7 +3,7 @@
    [pixi-engine.wrapper :as game]
    [pixi-engine.core :as pixi]))
 
-(defonce pixi-app (pixi/create-application {:width 400 :height 400}))
+(defonce pixi-app nil)
 (defonce chickadee nil)
 (defonce key-state (atom {}))
 
@@ -40,7 +40,8 @@
     (set! (.-x sprite) (+ x (* dt vx)))
     (set! (.-y sprite) (+ y (* dt vy)))))
 
-(defn setup []
+(defn setup [app]
+  (set! pixi-app app)
   (set! chickadee (create-entity "chickadee" (game/vec2 0 0)))
   (add-entity! pixi-app chickadee))
 
@@ -87,9 +88,10 @@
   (update-bird! dt))
 
 (game/init!
- pixi-app
  "#pixi-app"
- {:sprites sprites
+ {:width 400
+  :height 400
+  :sprites sprites
   :update update-game!
   :setup setup
   :on-keydown on-keydown

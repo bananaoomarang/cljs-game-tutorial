@@ -18,21 +18,25 @@
   (. js/window addEventListener "keydown" on-keydown false)
   (. js/window addEventListener "keyup" on-keyup false))
 
-(defn load-sprites! [pixi-app sprites]
+(defn load-sprites! [app sprites]
   (doseq [[key val] sprites]
-    (. (.-loader pixi-app) add (name key) val)))
+    (. (.-loader app) add (name key) val)))
+
+(defn add-sprite! [app sprite]
+  (pixi/add-child! (.-stage app) sprite))
 
 (defn init!
   "Init stuff"
 
-  [pixi-app el-selector {:keys [sprites setup update on-keydown on-keyup]}]
+  [el-selector {:keys [width height sprites setup update on-keydown on-keyup]}]
 
-  (. (get-app-element el-selector) appendChild (.-view pixi-app))
+  (let [app (pixi/create-application {:width width :height height})]
+    (. (get-app-element el-selector) appendChild (.-view app))
 
-  (load-sprites! pixi-app sprites)
-  (key-subscribe! on-keydown on-keyup)
+    (load-sprites! app sprites)
+    (key-subscribe! on-keydown on-keyup)
 
-  (. (.-loader pixi-app) load
-     (fn []
-       (setup)
-       (. (.-ticker pixi-app) add update))))
+    (. (.-loader app) load
+       (fn []
+         (setup app)
+         (. (.-ticker app) add update)))))
