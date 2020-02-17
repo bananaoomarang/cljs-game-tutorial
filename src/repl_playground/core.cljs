@@ -12,8 +12,7 @@
 
 (defn load-fn [opts cb]
   (go
-    (let [path (str "/code/" (:path opts) (if (:macros opts) ".clj" ".cljs"))
-          side (println path)
+    (let [path (str "/cljs-lib/" (:path opts) (if (:macros opts) ".clj" ".cljs"))
           response (<! (http/get path))
           src (:body response)]
       (cb {:lang :clj :source src}))))
@@ -37,7 +36,7 @@
     (reset! code value)
     (compile @code)))
 
-(defn editor []
+(defn editor [snippet-path]
   (let [root-ref (atom nil)
         mirror (atom nil)]
     (r/create-class
@@ -45,9 +44,9 @@
 
       :component-did-mount
       (fn []
-        (reset! mirror (js/CodeMirror @root-ref (clj->js {:value "(+ 1 1)" "mode" "clojure"})))
-        ;;(. @mirror on "change" handle-change)
-        )
+        (go
+          (let [response (<! (http/get snippet-path))]
+            (reset! mirror (js/CodeMirror @root-ref (clj->js {:value (:body response) "mode" "clojure"}))))))
 
       :render
       (fn []
@@ -63,7 +62,7 @@
 
 (defn app []
   [:div
-   [editor]
+   [editor "/snippets/game.cljs"]
    [result]])
 
 (r/render [app] (. js/document getElementById "app"))

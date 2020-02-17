@@ -8,7 +8,13 @@
 (defonce chickadee nil)
 (defonce key-state (atom {}))
 
-(def SPEED 5)
+(def bird-speed 5)
+
+(def sprites {:chickadee "/images/chickadee.png"})
+
+(defn setup []
+  (set! chickadee (create-entity "chickadee" (game/vec2 0 0)))
+  (game/add-entity! stage chickadee))
 
 (defn create-entity
   ([resource-name pos]
@@ -53,10 +59,10 @@
         left (:ArrowLeft ks)
         right (:ArrowRight ks)]
 
-    (if left (set-vel-x! chickadee (* -1 SPEED)))
-    (if right (set-vel-x! chickadee SPEED))
-    (if up (set-vel-y! chickadee (* -1 SPEED)))
-    (if down (set-vel-y! chickadee SPEED))
+    (if left (set-vel-x! chickadee (* -1 bird-speed)))
+    (if right (set-vel-x! chickadee bird-speed))
+    (if up (set-vel-y! chickadee (* -1 bird-speed)))
+    (if down (set-vel-y! chickadee bird-speed))
 
     (if (or (and left right) (and (not left) (not right)))
       (set-vel-x! chickadee 0))
@@ -68,12 +74,6 @@
 
 (defn update-game! [dt]
   (update-bird! dt))
-
-(def sprites {:chickadee "/images/chickadee.png"})
-
-(defn setup []
-  (set! chickadee (create-entity "chickadee" (game/vec2 0 0)))
-  (game/add-entity! stage chickadee))
 
 (game/init!
  pixi-app

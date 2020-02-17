@@ -2,7 +2,7 @@
 
 Experiment with self hosting CLJS code in the browser for interactive docs e.t.c.
 
-Currently serves a page with a CodeMirror editor that can eval arbritrary code. Try copying/pasting the code from `game.cljs`!
+Currently serves a page with a CodeMirror editor that can eval arbritrary code.
 
 ### Running ###
 
