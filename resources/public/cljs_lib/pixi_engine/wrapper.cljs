@@ -27,8 +27,11 @@
     (on-keyup e)))
 
 (defn key-subscribe! [on-keydown on-keyup]
-  (. js/window addEventListener "keydown" (create-on-keydown on-keydown) false)
-  (. js/window addEventListener "keyup" (create-on-keyup on-keyup) false))
+  (when on-keydown
+    (. js/window addEventListener "keydown" (create-on-keydown on-keydown) false))
+
+  (when on-keyup
+    (. js/window addEventListener "keyup" (create-on-keyup on-keyup) false)))
 
 (defn load-sprites! [app sprites]
   (doseq [[key val] sprites]

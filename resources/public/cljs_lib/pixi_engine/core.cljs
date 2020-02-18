@@ -16,9 +16,20 @@
   (let [resources (.. app -loader -resources)]
     (aget resources name)))
 
-(defn create-sprite [app resource-key {:keys [scale]}]
+(defn create-sprite [app resource-key {:keys [position anchor rotation scale]}]
   (let [resource (get-resource app resource-key)
         sprite (Sprite. (.-texture resource))]
+
+    (when position
+      (. (.-position sprite) set (:x position) (:y position)))
+
+    (when anchor
+      (. (.-anchor sprite) set (:x anchor) (:y anchor)))
+
+    (when rotation
+      (set! (.-rotation sprite) rotation))
+
     (when scale
-      (set! (.-scale sprite) (clj->js scale)))
+      (. (.-scale sprite) set (:x scale) (:y scale)))
+
     sprite))

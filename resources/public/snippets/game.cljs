@@ -85,12 +85,13 @@
 (defn update-game! [dt]
   (update-bird! dt))
 
-(game/init!
- "#pixi-app"
- {:width 400
-  :height 400
-  :sprites sprites
-  :update update-game!
-  :setup setup
-  :on-keydown on-keydown
-  :on-keyup on-keyup})
+(defonce game
+  (game/init!
+   "#pixi-app"
+   {:width 400
+    :height 400
+    :sprites sprites
+    :update update-game!
+    :setup setup
+    :on-keydown on-keydown
+    :on-keyup on-keyup}))
