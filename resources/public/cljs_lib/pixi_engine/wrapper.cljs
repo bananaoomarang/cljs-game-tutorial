@@ -14,9 +14,21 @@
 (defn get-app-element [selector]
   (. js/document querySelector selector))
 
+(defn create-on-keydown [on-keydown]
+  (fn [e]
+    (. e preventDefault)
+
+    (on-keydown e)))
+
+(defn create-on-keyup [on-keyup]
+  (fn [e]
+    (. e preventDefault)
+
+    (on-keyup e)))
+
 (defn key-subscribe! [on-keydown on-keyup]
-  (. js/window addEventListener "keydown" on-keydown false)
-  (. js/window addEventListener "keyup" on-keyup false))
+  (. js/window addEventListener "keydown" (create-on-keydown on-keydown) false)
+  (. js/window addEventListener "keyup" (create-on-keyup on-keyup) false))
 
 (defn load-sprites! [app sprites]
   (doseq [[key val] sprites]
