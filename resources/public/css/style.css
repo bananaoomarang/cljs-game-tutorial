@@ -3,12 +3,9 @@
     padding: 1rem;
 }
 
-#pixi-app {
-    margin-left: 1rem;
-}
-
 .CodeMirror {
     padding: 0.25rem;
+    width: 50rem;
 }
 
 .compiling-msg {
@@ -21,6 +18,13 @@
 
 .row-wrapper {
     display: flex;
+    padding: 1rem 0;
+}
+
+.canvas {
+    margin-left: 1rem;
+    width: 400px;
+    height: 400px;
 }
 
 .btn {

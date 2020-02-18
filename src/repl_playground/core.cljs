@@ -68,7 +68,7 @@
 (defn row [snippet app-class]
   [:div {:class "row-wrapper"}
    [editor (str "/snippets/" snippet ".cljs")]
-   [:div {:id app-class}]])
+   [:div {:id app-class :class "canvas"}]])
 
 (defn app []
   [:div
