@@ -73,6 +73,7 @@
 (defn app []
   [:div
    [row "1" "pixi-app-1"]
+   [row "2" "pixi-app-2"]
    [row "game" "pixi-app"]
    [result]])
 

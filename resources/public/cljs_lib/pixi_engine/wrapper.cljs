@@ -37,6 +37,9 @@
   (doseq [[key val] sprites]
     (. (.-loader app) add (name key) val)))
 
+(defn create-sprite [app resource-key opts]
+  (pixi/create-sprite app resource-key opts))
+
 (defn add-sprite! [app sprite]
   (pixi/add-child! (.-stage app) sprite))
 
