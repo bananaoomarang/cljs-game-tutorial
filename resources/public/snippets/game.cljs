@@ -1,4 +1,4 @@
-(ns pixi-tutorial-2.game
+(ns pixi-tutorial-final.game
   (:require
    [pixi-engine.wrapper :as game]
    [pixi-engine.core :as pixi]))
