@@ -1,7 +1,6 @@
 (ns pixi-tutorial-final.game
   (:require
-   [pixi-engine.wrapper :as game]
-   [pixi-engine.core :as pixi]))
+   [pixi-engine.wrapper :as game]))
 
 (defonce chickadee nil)
 (defonce key-state (atom {}))
@@ -14,14 +13,14 @@
   ([app resource-name pos]
    (create-entity app resource-name pos {}))
   ([app resource-name pos {:keys [vel] :or {:vel (game/vec2 0 0)}}]
-   (atom {:sprite (pixi/create-sprite app resource-name {:scale {:x 0.5 :y 0.5}})
+   (atom {:sprite (game/create-sprite app resource-name {:scale {:x 0.5 :y 0.5}})
           :x (game/vec-x pos)
           :y (game/vec-y pos)
           :vx (game/vec-x vel)
           :vy (game/vec-y vel)})))
 
 (defn add-entity! [app entity]
-  (pixi/add-child! (.-stage app) (:sprite @entity)))
+  (game/add-sprite! app (:sprite @entity)))
 
 (defn set-vel-x! [entity v]
   (swap! entity assoc :vx v))

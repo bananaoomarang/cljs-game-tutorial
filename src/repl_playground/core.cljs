@@ -1,6 +1,7 @@
 (ns repl-playground.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [clojure.pprint :refer [pprint]]
+            [clojure.string :refer [lower-case]]
             [cljs.js]
             [cljs.core.async :refer [<!]]
             [cljs-http.client :as http]
@@ -13,10 +14,12 @@
 
 (defn load-fn [opts cb]
   (go
-    (let [path (str "/cljs_lib/" (:path opts) (if (:macros opts) ".clj" ".cljs"))
+    (let [path (lower-case (str "/cljs_lib/" (:path opts) (if (:macros opts) ".clj" ".cljs")))
           response (<! (http/get path))
           src (:body response)]
-      (cb {:lang :clj :source src}))))
+      (if (= (:status response) 404)
+        nil
+        (cb {:lang :clj :source src})))))
 
 (set! cljs.js/*eval-fn* cljs.js/js-eval)
 

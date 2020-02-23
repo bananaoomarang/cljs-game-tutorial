@@ -1,3 +1,3 @@
 ^{:css-dirs ["resources/public/css"]
-  :ring-handler repl-playground.app-server/handler}
+  :ring-handler repl-playground.app-server/app}
 {:main repl-playground.core}
