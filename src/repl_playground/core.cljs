@@ -11,6 +11,7 @@
 (def code-result (r/atom ""))
 
 (defn handle-eval [result]
+  (println result)
   (reset! compiling false)
   (let [printed-result (with-out-str (pprint (:value result)))]
     (reset! code-result printed-result)))
