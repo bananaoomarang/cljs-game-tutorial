@@ -9,8 +9,8 @@
            (->
             (route/not-found "nothing here buddy")
             ;;(wrap-file "resources/public/cljs_lib")
-            (wrap-file "src")
-            (wrap-file "target/public/cljs-out/dev")))
+            (wrap-file "target/public/cljs-out/dev")
+            (wrap-file "src")))
   (route/not-found "<h1>Nothing here buddy</h1>"))
 
 

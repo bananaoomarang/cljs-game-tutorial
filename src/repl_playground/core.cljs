@@ -1,39 +1,21 @@
 (ns repl-playground.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [clojure.pprint :refer [pprint]]
-            [clojure.string :refer [lower-case]]
-            [cljs.js]
             [cljs.core.async :refer [<!]]
             [cljs-http.client :as http]
             [reagent.core :as r]
-            [goog.functions :refer [debounce]]))
+            [repl-playground.repl :as repl]))
 
 (def compiling (r/atom false))
 (def code (r/atom "(+ 1 1)"))
 (def code-result (r/atom ""))
-
-(defn load-fn [opts cb]
-  (go
-    (let [path (lower-case (str "/cljs_lib/" (:path opts) (if (:macros opts) ".clj" ".cljs")))
-          response (<! (http/get path))
-          src (:body response)]
-      (if (= (:status response) 404)
-        nil
-        (cb {:lang :clj :source src})))))
-
-(set! cljs.js/*eval-fn* cljs.js/js-eval)
-
-(def comp-state (cljs.js/empty-state))
 
 (defn handle-eval [result]
   (reset! compiling false)
   (let [printed-result (with-out-str (pprint (:value result)))]
     (reset! code-result printed-result)))
 
-(defn compile [str]
-  (cljs.js/eval-str comp-state str "random-name" {:load load-fn} handle-eval))
-
-(def debounced-compile (debounce compile 200))
+(def compile (repl/make-compile handle-eval))
 
 (defn update-result [mirror]
   (reset! compiling true)
