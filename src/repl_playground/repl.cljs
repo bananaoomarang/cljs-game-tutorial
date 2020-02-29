@@ -1,7 +1,7 @@
 (ns repl-playground.repl
   (:require-macros [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [clojure.string :refer [starts-with? ends-with?]]
+   [clojure.string :refer [starts-with? ends-with? replace]]
    [cljs.js]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]))
@@ -9,10 +9,28 @@
 (set! cljs.js/*eval-fn* cljs.js/js-eval)
 (def comp-state (cljs.js/empty-state))
 
+(def loaded-js-set
+  "A set containing namespaces already loaded."
+  '#{cljs.analyzer
+     cljs.compiler
+     cljs.env
+     cljs.reader
+     cljs.source-map
+     cljs.source-map.base64
+     cljs.source-map.base64-vlq
+     cljs.stacktrace
+     cljs.tagged-literals
+     cljs.tools.reader.impl.utils
+     cljs.tools.reader.reader-types
+     clojure.set
+     clojure.string
+     cognitect.transit})
+
 (defn skip-load?
   [{:keys [name macros]}]
   
   (or
+   (contains? loaded-js-set name)
    (= name 'cljs.core)
    (= name 'cljs.analyzer)
    (and (= name 'cljs.pprint) macros)
@@ -53,12 +71,58 @@
     [".clj" ".cljc"]
     [".cljs" ".cljc" ".js"]))
 
+(def cache-extensions
+  [".cljs.cache.edn"
+   ".js.cache.edn"
+   ".cljs.cache.json"
+   ".js.cache.json"])
+
+(defn get-cache-paths [opts]
+  (let [prefix "/cljs_lib/"
+        module-path (:path opts)
+        extensions cache-extensions]
+    (for [extension extensions]
+      (str prefix module-path extension))))
+
 (defn get-paths [opts]
   (let [prefix "/cljs_lib/"
         module-path (:path opts)
         extensions (get-extensions opts)]
     (for [extension extensions]
       (str prefix module-path extension))))
+
+(defn cache-source-path [path]
+  (-> path
+      (replace #".cache.(json|edn)" "")
+      (replace #".cljs?$" ".js")))
+
+(defn cache-prefix-for-path
+  ([path macros]
+   (str (munge path) (when macros "$macros")))
+  ([cache-path path macros]
+   (str cache-path  "/" (munge path) (when macros "$macros"))))
+
+(defn resolve-cache-source
+  "
+  First resolves a cache.{cljs,js}.{json,edn} file,
+  then its js/cljs counterpart. Returns nil if it can't
+  find a pair.
+  "
+
+  [paths]
+  (go-loop [cur-paths paths]
+    (if (empty? cur-paths) nil
+        (let [path (first cur-paths)
+              source-path (cache-source-path path)
+              cache-source (<! (resolve-file path))]
+
+          (when-not cache-source
+            (recur (rest cur-paths)))
+
+          (let [source (<! (resolve-file source-path))]
+            (if source
+              {:lang :js :source source :cache cache-source}
+              (recur (rest cur-paths))))))))
 
 (defn resolve-source
   "Resolve list of paths returning the first success"
@@ -75,21 +139,25 @@
             (recur (rest cur-paths)))))))
 
 (defn load-fn [opts cb]
-  (cond
-    (skip-load? opts) (cb {:lang :js
-                           :source ""})
-    (goog? opts)
-    (go
-      (let [deps-map (<! (load-deps-map!))
-            path (get deps-map (:name opts))
-            result (<! (resolve-source (get-paths (merge opts {:path path}))))]
-        (js/console.log (clj->js result))
-        (cb result)))
-    
-    :else
-    (go
-      (let [result (<! (resolve-source (get-paths opts)))]
-        (cb result)))))
+  (if (skip-load? opts) (cb {:lang :js
+                             :source ""})
+      (go
+        (if
+          (goog? opts)
+          (let [deps-map (<! (load-deps-map!))
+                path (get deps-map (:name opts))
+                result (<! (resolve-source (get-paths (merge opts {:path path}))))]
+            (cb result))
+
+
+          (let [cache-result (<! (resolve-cache-source (get-cache-paths opts)))
+                result (when-not cache-result
+                         (<! (resolve-source (get-paths opts))))]
+            ;; (if cache-result
+            ;;   (println "Loading cache" cache-result)
+            ;;   (println "Loading source" result))
+
+            (cb (if cache-result cache-result result)))))))
 
 (defn make-compile [handle-eval]
   (fn [str]

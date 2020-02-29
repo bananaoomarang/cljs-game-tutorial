@@ -1,6 +1,7 @@
 (ns pixi-engine.core
   (:require
-   [oops.core :refer [oget+]]))
+   ;;[oops.core :refer [oget+]]
+   ))
 
 (def PIXIApplication (.-Application js/PIXI))
 (def Sprite (.-Sprite js/PIXI))
@@ -13,7 +14,7 @@
 
 (defn get-resource [app name]
   (let [resources (.. app -loader -resources)]
-    (oget+ resources name)))
+    (aget resources name)))
 
 (defn create-sprite [app resource-key {:keys [position anchor rotation scale]}]
   (let [resource (get-resource app resource-key)
