@@ -63,7 +63,7 @@
 
 (defn load-deps-map! []
   (go
-    (let [source (<! (resolve-file "goog/deps.js"))]
+    (let [source (<! (resolve-file "cljs_lib/goog/deps.js"))]
       (goog-deps-map source))))
 
 (defn get-extensions [{:keys [macros]}]
@@ -142,13 +142,11 @@
   (if (skip-load? opts) (cb {:lang :js
                              :source ""})
       (go
-        (if
-          (goog? opts)
+        (if (goog? opts)
           (let [deps-map (<! (load-deps-map!))
                 path (get deps-map (:name opts))
                 result (<! (resolve-source (get-paths (merge opts {:path path}))))]
             (cb result))
-
 
           (let [cache-result (<! (resolve-cache-source (get-cache-paths opts)))
                 result (when-not cache-result
