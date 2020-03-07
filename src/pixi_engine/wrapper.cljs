@@ -25,6 +25,10 @@
   ([v x y]
    (assoc v :x (* x (:x v)) :y (* y (:y v)))))
 
+(defn vec2-add
+  [v1 v2]
+  (assoc v1 :x (+ (:x v1) (:x v2)) :y (+ (:y v1) (:y v2))))
+
 (defn get-app-element [selector]
   (. js/document querySelector selector))
 
