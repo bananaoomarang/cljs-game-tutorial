@@ -3,13 +3,27 @@
    [pixi-engine.core :as pixi]))
 
 (defn vec2 [x y]
-  [x y])
+  {:x x :y y})
 
 (defn vec-x [v]
-  (get v 0))
+  (:x v))
 
 (defn vec-y [v]
-  (get v 1))
+  (:y v))
+
+(defn set-vec2
+  ([v xy]
+   (set-vec2 v xy xy))
+
+  ([v x y]
+   (assoc v :x x :y y)))
+
+(defn vec2*
+  ([v n]
+   (vec2* v n n))
+
+  ([v x y]
+   (assoc v :x (* x (:x v)) :y (* y (:y v)))))
 
 (defn get-app-element [selector]
   (. js/document querySelector selector))

@@ -4,7 +4,8 @@
             [cljs.core.async :refer [<!]]
             [cljs-http.client :as http]
             [reagent.core :as r]
-            [repl-playground.repl :as repl]))
+            [repl-playground.repl :as repl]
+            [code-mirror]))
 
 (def compiling (r/atom false))
 (def code (r/atom "(+ 1 1)"))
@@ -18,7 +19,7 @@
 
 (def compile (repl/make-compile handle-eval))
 
-(defn update-result [mirror]
+(defn update-result [^js/CodeMirror mirror]
   (reset! compiling true)
   (let [value (. mirror getValue)]
     (reset! code value)
@@ -34,10 +35,10 @@
       (fn []
         (go
           (let [response (<! (http/get snippet-path))]
-            (reset! mirror (js/CodeMirror @root-ref
-                                          (clj->js {:value (:body response)
-                                                    :theme "dracula"
-                                                    :mode "clojure"}))))))
+            (reset! mirror (code-mirror @root-ref
+                                        (clj->js {:value (:body response)
+                                                  :theme "dracula"
+                                                  :mode "clojure"}))))))
 
       :render
       (fn []

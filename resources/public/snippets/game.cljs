@@ -5,41 +5,53 @@
 (defonce chickadee nil)
 (defonce key-state (atom {}))
 
-(def bird-speed 5)
+(def bird-speed 10)
+(def bird-ang-speed 0.1)
 
 (def sprites {:chickadee "/images/chickadee.png"})
 
 (defn create-entity
-  ([app resource-name pos]
-   (create-entity app resource-name pos {}))
-  ([app resource-name pos {:keys [vel] :or {:vel (game/vec2 0 0)}}]
-   (atom {:sprite (game/create-sprite app resource-name {:scale {:x 0.5 :y 0.5}})
-          :x (game/vec-x pos)
-          :y (game/vec-y pos)
-          :vx (game/vec-x vel)
-          :vy (game/vec-y vel)})))
+  ([app resource-name]
+   (create-entity app resource-name {}))
+  ([app resource-name {:keys [sprite-opts
+                              vel
+                              angular-vel]
+                       :or {:sprite-opts {}
+                            :vel (game/vec2 0 0)
+                            :angular-vel 0}}]
+   (atom {:sprite (game/create-sprite app resource-name sprite-opts)
+          :angular-vel angular-vel
+          :vel vel})))
 
 (defn add-entity! [app entity]
   (game/add-sprite! app (:sprite @entity)))
 
-(defn set-vel-x! [entity v]
-  (swap! entity assoc :vx v))
+(defn set-angular-vel! [entity av]
+  (swap! entity assoc :angular-vel av))
 
-(defn set-vel-y! [entity v]
-  (swap! entity assoc :vy v))
+(defn get-direction [rad]
+  (game/vec2 (Math/sin rad) (* -1 (Math/cos rad))))
 
 (defn update-entity! [dt entity]
   (let [e @entity
         sprite (:sprite e)
-        vx (:vx e)
-        vy (:vy e)
+        vx (-> e :vel :x)
+        vy (-> e :vel :y)
+        av (:angular-vel e)
+        rot (.-rotation sprite)
         x (.-x sprite)
         y (.-y sprite)]
+    (set! (.-rotation sprite) (+ rot (* dt av)))
     (set! (.-x sprite) (+ x (* dt vx)))
     (set! (.-y sprite) (+ y (* dt vy)))))
 
 (defn setup [app]
-  (set! chickadee (create-entity app "chickadee" (game/vec2 0 0)))
+  (set! chickadee
+        (create-entity app
+                       "chickadee"
+                       {:sprite-opts {:position (game/vec2 200 200)
+                                      :scale (game/vec2 0.5 0.5)
+                                      :anchor (game/vec2 0.5 0.5)}}))
   (add-entity! app chickadee))
 
 (defn on-keydown [e]
@@ -62,22 +74,19 @@
         right (:ArrowRight ks)]
 
     (when left
-      (set-vel-x! chickadee (* -1 bird-speed)))
+      (set-angular-vel! chickadee (* -1 bird-ang-speed)))
 
     (when right
-      (set-vel-x! chickadee bird-speed))
+      (set-angular-vel! chickadee bird-ang-speed))
 
-    (when up
-      (set-vel-y! chickadee (* -1 bird-speed)))
-
-    (when down
-      (set-vel-y! chickadee bird-speed))
+    (if up
+      (swap! chickadee assoc :vel (game/vec2*
+                                   (get-direction (-> @chickadee :sprite .-rotation))
+                                   bird-speed))
+      (swap! chickadee assoc :vel (game/vec2 0 0)))
 
     (when (or (and left right) (and (not left) (not right)))
-      (set-vel-x! chickadee 0))
-
-    (when (or (and up down) (and (not up) (not down)))
-      (set-vel-y! chickadee 0)))
+      (set-angular-vel! chickadee 0)))
 
   (update-entity! dt chickadee))
 
