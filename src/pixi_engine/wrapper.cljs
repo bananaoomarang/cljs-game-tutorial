@@ -19,11 +19,8 @@
    (assoc v :x x :y y)))
 
 (defn vec2*
-  ([v n]
-   (vec2* v n n))
-
-  ([v x y]
-   (assoc v :x (* x (:x v)) :y (* y (:y v)))))
+  [v n]
+  (assoc v :x (* n (:x v)) :y (* n (:y v))))
 
 (defn vec2-add
   [v1 v2]
@@ -61,6 +58,8 @@
 (defn add-sprite! [app sprite]
   (pixi/add-child! (.-stage app) sprite))
 
+(def create-rectangle pixi/create-rectangle)
+
 (defn init!
   "Init stuff"
 
@@ -75,4 +74,4 @@
     (. (.-loader app) load
        (fn []
          (setup app)
-         (. (.-ticker app) add update)))))
+         (. (.-ticker app) add (partial update app))))))

@@ -4,6 +4,7 @@
 
 (def PIXIApplication (.-Application js/PIXI))
 (def Sprite (.-Sprite js/PIXI))
+(def Graphics (.-Graphics js/PIXI))
 
 (defn create-application [config]
   (PIXIApplication. (clj->js config)))
@@ -32,3 +33,12 @@
       (. (.-scale sprite) set (:x scale) (:y scale)))
 
     sprite))
+
+(defn create-graphics []
+  (Graphics.))
+
+(defn create-rectangle [w h color]
+  (let [graphics (create-graphics)]
+    (.beginFill graphics color)
+    (.drawRect graphics 0 0 w h)
+    (.endFill graphics)))
