@@ -4,6 +4,7 @@
             [cljs.core.async :refer [<!]]
             [cljs-http.client :as http]
             [reagent.core :as r]
+            [reagent.dom :as r-dom]
             [repl-playground.repl :as repl]
             [code-mirror]))
 
@@ -64,4 +65,4 @@
    [row "game" "pixi-app"]
    [result]])
 
-(r/render [app] (. js/document getElementById "app"))
+(r-dom/render [app] (. js/document getElementById "app"))

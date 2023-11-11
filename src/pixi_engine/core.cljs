@@ -4,6 +4,7 @@
 
 (def PIXIApplication (.-Application js/PIXI))
 (def Sprite (.-Sprite js/PIXI))
+(def Assets (.-Assets js/PIXI))
 (def Graphics (.-Graphics js/PIXI))
 
 (defn create-application [config]
@@ -12,13 +13,12 @@
 (defn add-child! [container sprite]
   (. container addChild sprite))
 
-(defn get-resource [app name]
-  (let [resources (.. app -loader -resources)]
-    (gobj/get resources name)))
+(defn get-resource [name]
+  (. Assets get name))
 
 (defn create-sprite [app resource-key {:keys [position anchor rotation scale]}]
-  (let [resource (get-resource app resource-key)
-        sprite (Sprite. (.-texture resource))]
+  (let [resource (get-resource resource-key)
+        sprite (.from Sprite resource)]
 
     (when position
       (. (.-position sprite) set (:x position) (:y position)))

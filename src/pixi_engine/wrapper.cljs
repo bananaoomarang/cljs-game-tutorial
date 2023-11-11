@@ -50,7 +50,9 @@
 
 (defn load-sprites! [app sprites]
   (doseq [[key val] sprites]
-    (. (.-loader app) add (name key) val)))
+    (. pixi/Assets add (clj->js {:alias (name key) :src val})))
+  
+  (. pixi/Assets load (clj->js (keys sprites))))
 
 (defn create-sprite [app resource-key opts]
   (pixi/create-sprite app resource-key opts))
@@ -68,10 +70,9 @@
   (let [app (pixi/create-application {:width width :height height})]
     (. (get-app-element el-selector) appendChild (.-view app))
 
-    (load-sprites! app sprites)
-    (key-subscribe! on-keydown on-keyup)
-
-    (. (.-loader app) load
-       (fn []
-         (setup app)
-         (. (.-ticker app) add (partial update app))))))
+    (.then
+     (load-sprites! app sprites)
+     (fn []
+       (key-subscribe! on-keydown on-keyup)
+       (setup app)
+       (. (.-ticker app) add (partial update app))))))
