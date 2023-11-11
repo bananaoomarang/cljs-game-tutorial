@@ -10,10 +10,13 @@
                                              :scale {:x 0.5 :y 0.5}})]
     (game/add-sprite! app bird)))
 
+(defn update-game! [_])
+
 (defonce game
   (game/init!
    "#pixi-app-1"
    {:width 400
     :height 400
     :sprites sprites
+    :update update-game!
     :setup setup}))

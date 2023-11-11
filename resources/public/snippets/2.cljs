@@ -7,14 +7,15 @@
 (def sprites {:bird "/images/chickadee.png"})
 
 ;; Change me and re-run!
-(def rot-speed 0.1)
+(def rot-speed 0.01)
 
 (defn setup [app]
   (set! bird (game/create-sprite app "bird" {:position {:x 200 :y 200}
-                                             :anchor {:x 0.5 :y 0.5}}))
+                                             :anchor {:x 0.5 :y 0.5}
+                                             :scale {:x 0.5 :y 0.5}}))
   (game/add-sprite! app bird))
 
-(defn update! [dt]
+(defn update-game! [_ dt]
   (let [rotation (.-rotation bird)]
     (set! (.-rotation bird) (+ rotation (* dt rot-speed)))))
 
@@ -24,5 +25,5 @@
    {:width 400
     :height 400
     :sprites sprites
-    :update update!
+    :update update-game!
     :setup setup}))
