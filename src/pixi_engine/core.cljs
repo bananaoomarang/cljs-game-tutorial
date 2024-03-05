@@ -13,6 +13,9 @@
 (defn add-child! [container sprite]
   (. container addChild sprite))
 
+(defn remove-child! [container sprite]
+  (. container removeChild sprite))
+
 (defn get-resource [name]
   (. Assets get name))
 

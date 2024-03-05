@@ -3,9 +3,13 @@
     padding: 1rem;
 }
 
-.CodeMirror {
-    padding: 0.25rem;
-    width: 50rem;
+.main-editor {
+  padding: 0.25rem;
+  width: 50rem;
+}
+
+.mini-editor {
+  width: 33%;
 }
 
 .compiling-msg {
@@ -19,6 +23,10 @@
 .row-wrapper {
     display: flex;
     padding: 1rem 0;
+}
+
+.row-wrapper .CodeMirror {
+  height: 400px;
 }
 
 .canvas {

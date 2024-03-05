@@ -9,10 +9,11 @@
 (defonce canvas-width 400)
 (defonce canvas-height 400)
 
-(def shot false)
-(def bullet-speed 10)
-(def bird-speed 0.1)
-(def bird-ang-speed 0.1)
+(defonce ^:dynamic *app* nil)
+(def ^:dynamic *shot* false)
+(def ^:dynamic *bullet-speed* 10)
+(def ^:dynamic *bird-speed* 0.1)
+(def ^:dynamic *bird-ang-speed* 0.1)
 
 (def sprites {:chickadee "/images/chickadee.png"})
 
@@ -55,6 +56,9 @@
 (defn add-entity! [app entity]
   (game/add-sprite! app (:sprite @entity)))
 
+(defn remove-entity! [app entity]
+  (game/remove-sprite! app (:sprite @entity)))
+
 (defn set-angular-vel! [entity av]
   (swap! entity assoc :angular-vel av))
 
@@ -91,11 +95,12 @@
                               {:position (:position @chickadee)
                                :vel (game/vec2*
                                      (get-direction (:rotation @chickadee))
-                                     bullet-speed)})]
+                                     *bullet-speed*)})]
     (swap! bullets conj bullet)
     (add-entity! app bullet)))
 
 (defn setup [app]
+  (set! *app* app)
   (set! chickadee
         (create-entity app
                        "chickadee"
@@ -114,12 +119,12 @@
 
 (defn handle-shoot!
   [app {:keys [Space]}]
-  (when (and Space (not shot))
+  (when (and Space (not *shot*))
     (shoot! app)
-    (set! shot true))
+    (set! *shot* true))
 
   (when-not Space
-    (set! shot false)))
+    (set! *shot* false)))
 
 (defn handle-move!
   "Move the bird if they click the arrows"
@@ -131,15 +136,15 @@
         right (:ArrowRight key-state)]
 
     (when left
-      (set-angular-vel! chickadee (* -1 bird-ang-speed)))
+      (set-angular-vel! chickadee (* -1 *bird-ang-speed*)))
 
     (when right
-      (set-angular-vel! chickadee bird-ang-speed))
+      (set-angular-vel! chickadee *bird-ang-speed*))
 
     (if up
       (swap! chickadee assoc :accel (game/vec2*
                                      (get-direction (:rotation @chickadee))
-                                     bird-speed))
+                                     *bird-speed*))
       (swap! chickadee assoc :accel (game/vec2 0 0)))
 
     (when (or (and left right) (and (not left) (not right)))

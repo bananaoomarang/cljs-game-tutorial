@@ -158,5 +158,11 @@
             (cb (if cache-result cache-result result)))))))
 
 (defn make-compile [handle-eval]
-  (fn [str]
-    (cljs.js/eval-str comp-state str "random-name" {:load load-fn} handle-eval)))
+  (fn [str ns]
+    (cljs.js/eval-str
+     comp-state
+     str
+     "random-name"
+     {:load load-fn
+      :ns ns}
+     handle-eval)))

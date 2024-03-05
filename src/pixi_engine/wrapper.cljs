@@ -60,6 +60,9 @@
 (defn add-sprite! [app sprite]
   (pixi/add-child! (.-stage app) sprite))
 
+(defn remove-sprite! [app sprite]
+  (pixi/remove-child! (.-stage app) sprite))
+
 (def create-rectangle pixi/create-rectangle)
 
 (defn init!

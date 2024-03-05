@@ -30,7 +30,9 @@
   (reset! compiling true)
   (let [value (. mirror getValue)]
     (reset! code value)
-    (compile @code)))
+    
+    ;; ns option doesn't seem to work so :/
+    (compile (str "(ns pixi-tutorial-final.game)" @code))))
 
 (defn clear-pixi! []
   (set! (.-innerHTML (. js/document getElementById "pixi-app")) ""))
@@ -47,9 +49,10 @@
       (.setValue val))
   (clear-pixi!))
 
-(defn editor [snippet-path snippet-ns]
+(defn editor [snippet-name]
   (let [root-ref (atom nil)
-        mirror (atom nil)]
+        mirror (atom nil)
+        snippet-path (str "/snippets/" snippet-name ".cljs")]
     (r/create-class
      {:display-name "editor"
 
@@ -71,37 +74,31 @@
       :render
       (fn []
         [:div
-         [:div {:ref #(reset! root-ref %)}]
+         [:div.editor {:ref #(reset! root-ref %)}]
          [:button {:class "btn" :on-click #(update-result @mirror)} "Eval 😈"]])})))
 
 (defn result []
   [:div
    (if @compiling
      [:div {:class "compiling-msg"} "Compiling…"]
-     [:div {:class "compile-result"} (str @code-result)])])
+     [:div {:class "compile-result"} (str "Last eval result: " @code-result)])])
 
-(defn row [snippet]
-  [:div {:class "row-wrapper"}
-   [editor (str "/snippets/" (:path snippet) ".cljs") (:ns snippet)]
+(defn main-editor [snippet]
+  [:div.row-wrapper
+   [:div.main-editor
+    [editor (:path snippet)]]
    [:div {:id "pixi-app" :class "canvas"}]])
 
-(defn bounded-dec [n]
-  (if (> n 0) (dec n) n))
-
-(defn bounded-inc [n]
-  (let [snippet-count (count snippets)]
-    (if (< n (dec snippet-count)) (inc n) n)))
-
-(defn arrows []
-  [:div
-   [:button.btn {:on-click #(swap! current-snippet bounded-dec)} "<"]
-   [:button.btn {:on-click #(swap! current-snippet bounded-inc)} ">"]])
+(defn mini-editor [snippet title]
+  [:div.mini-editor
+   [:h3 (if title title snippet)]
+   [editor snippet]])
 
 (defn app []
   [:div
-   [row (nth snippets @current-snippet)]
-   [arrows]
-   [result]
-   @current-snippet])
+   [main-editor (nth snippets @current-snippet)]
+   [:div.mini-editors
+    [mini-editor "clear-bullets" "Clear bullets"]]
+   [result]])
 
 (r-dom/render [app] (. js/document getElementById "app"))
