@@ -72,7 +72,7 @@
       (fn []
         [:div
          [:div {:ref #(reset! root-ref %)}]
-         [:button {:class "btn" :on-click #(update-result @mirror)} "Re-evaluate"]])})))
+         [:button {:class "btn" :on-click #(update-result @mirror)} "Eval 😈"]])})))
 
 (defn result []
   [:div

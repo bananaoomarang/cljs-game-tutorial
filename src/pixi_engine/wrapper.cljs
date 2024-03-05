@@ -31,13 +31,13 @@
 
 (defn create-on-keydown [on-keydown]
   (fn [e]
-    (. e preventDefault)
+    ;; (. e preventDefault)
 
     (on-keydown e)))
 
 (defn create-on-keyup [on-keyup]
   (fn [e]
-    (. e preventDefault)
+    ;; (. e preventDefault)
 
     (on-keyup e)))
 
