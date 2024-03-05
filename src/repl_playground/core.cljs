@@ -11,12 +11,12 @@
 (def compiling (r/atom false))
 (def code (r/atom "(+ 1 1)"))
 (def code-result (r/atom ""))
-(def current-snippet (r/atom 0))
+(def current-snippet (r/atom 2))
 
 (def snippets
-  [{:path "1"}
-   {:path "2"}
-   {:path "game"}])
+  [{:path "1" :ns "pixi-tutorial-1.game"}
+   {:path "2" :ns "pixi-tutorial-2.game"}
+   {:path "game" :ns "pixi-tutorial-final.game"}])
 
 (defn handle-eval [result]
   (println result)
@@ -32,7 +32,22 @@
     (reset! code value)
     (compile @code)))
 
-(defn editor [snippet-path]
+(defn clear-pixi! []
+  (set! (.-innerHTML (. js/document getElementById "pixi-app")) ""))
+
+(defn create-editor [node val]
+  (code-mirror node
+               (clj->js {:value val
+                         :theme "dracula"
+                         :mode "clojure"})))
+
+(defn update-editor-value [mirror val]
+  (-> mirror
+      (.getDoc)
+      (.setValue val))
+  (clear-pixi!))
+
+(defn editor [snippet-path snippet-ns]
   (let [root-ref (atom nil)
         mirror (atom nil)]
     (r/create-class
@@ -42,21 +57,22 @@
       (fn []
         (go
           (let [response (<! (http/get snippet-path))]
-            (reset! mirror (code-mirror @root-ref
-                                        (clj->js {:value (:body response)
-                                                  :theme "dracula"
-                                                  :mode "clojure"}))))))
+            (reset! mirror (create-editor @root-ref (:body response))))))
+      
       :component-did-update
       (fn [this]
         (let [new-argv (rest (r/argv this))
-              snippet-path (first new-argv)]
-          (println snippet-path)))
+              snippet-path (first new-argv)
+              snippet-ns (second new-argv)]
+          (go
+            (update-editor-value @mirror "Loading snippet...")
+            (update-editor-value @mirror (:body (<! (http/get snippet-path)))))))
 
       :render
       (fn []
         [:div
          [:div {:ref #(reset! root-ref %)}]
-         [:button {:class "btn" :on-click #(update-result @mirror)} "Run"]])})))
+         [:button {:class "btn" :on-click #(update-result @mirror)} "Re-evaluate"]])})))
 
 (defn result []
   [:div
@@ -66,7 +82,7 @@
 
 (defn row [snippet]
   [:div {:class "row-wrapper"}
-   [editor (str "/snippets/" snippet ".cljs")]
+   [editor (str "/snippets/" (:path snippet) ".cljs") (:ns snippet)]
    [:div {:id "pixi-app" :class "canvas"}]])
 
 (defn bounded-dec [n]
@@ -83,7 +99,7 @@
 
 (defn app []
   [:div
-   [row (:path (nth snippets @current-snippet))]
+   [row (nth snippets @current-snippet)]
    [arrows]
    [result]
    @current-snippet])
