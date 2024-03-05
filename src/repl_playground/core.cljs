@@ -11,6 +11,12 @@
 (def compiling (r/atom false))
 (def code (r/atom "(+ 1 1)"))
 (def code-result (r/atom ""))
+(def current-snippet (r/atom 0))
+
+(def snippets
+  [{:path "1"}
+   {:path "2"}
+   {:path "game"}])
 
 (defn handle-eval [result]
   (println result)
@@ -26,7 +32,7 @@
     (reset! code value)
     (compile @code)))
 
-(defn editor [snippet-path ]
+(defn editor [snippet-path]
   (let [root-ref (atom nil)
         mirror (atom nil)]
     (r/create-class
@@ -40,6 +46,11 @@
                                         (clj->js {:value (:body response)
                                                   :theme "dracula"
                                                   :mode "clojure"}))))))
+      :component-did-update
+      (fn [this]
+        (let [new-argv (rest (r/argv this))
+              snippet-path (first new-argv)]
+          (println snippet-path)))
 
       :render
       (fn []
@@ -53,16 +64,28 @@
      [:div {:class "compiling-msg"} "Compiling…"]
      [:div {:class "compile-result"} (str @code-result)])])
 
-(defn row [snippet app-class]
+(defn row [snippet]
   [:div {:class "row-wrapper"}
    [editor (str "/snippets/" snippet ".cljs")]
-   [:div {:id app-class :class "canvas"}]])
+   [:div {:id "pixi-app" :class "canvas"}]])
+
+(defn bounded-dec [n]
+  (if (> n 0) (dec n) n))
+
+(defn bounded-inc [n]
+  (let [snippet-count (count snippets)]
+    (if (< n (dec snippet-count)) (inc n) n)))
+
+(defn arrows []
+  [:div
+   [:button.btn {:on-click #(swap! current-snippet bounded-dec)} "<"]
+   [:button.btn {:on-click #(swap! current-snippet bounded-inc)} ">"]])
 
 (defn app []
   [:div
-   [row "1" "pixi-app-1"]
-   [row "2" "pixi-app-2"]
-   [row "game" "pixi-app"]
-   [result]])
+   [row (:path (nth snippets @current-snippet))]
+   [arrows]
+   [result]
+   @current-snippet])
 
 (r-dom/render [app] (. js/document getElementById "app"))

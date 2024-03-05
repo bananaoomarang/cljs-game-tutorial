@@ -70,9 +70,9 @@
   (let [app (pixi/create-application {:width width :height height})]
     (. (get-app-element el-selector) appendChild (.-view app))
 
-    (.then
-     (load-sprites! app sprites)
-     (fn []
-       (key-subscribe! on-keydown on-keyup)
-       (setup app)
-       (. (.-ticker app) add (partial update app))))))
+    (-> (load-sprites! app sprites)
+        (.then
+         (fn []
+           (key-subscribe! on-keydown on-keyup)
+           (setup app)
+           (. (.-ticker app) add (partial update app)))))))

@@ -21,7 +21,7 @@
 
 (defonce game
   (game/init!
-   "#pixi-app-2"
+   "#pixi-app"
    {:width 400
     :height 400
     :sprites sprites
