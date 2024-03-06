@@ -69,6 +69,7 @@
   "Init stuff"
 
   [el-selector {:keys [width height sprites setup update on-keydown on-keyup]}]
+  (println "running init...")
 
   (let [app (pixi/create-application {:width width :height height})]
     (. (get-app-element el-selector) appendChild (.-view app))

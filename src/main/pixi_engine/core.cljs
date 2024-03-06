@@ -1,11 +1,12 @@
 (ns pixi-engine.core
   (:require
+   ["pixi.js" :as pixi]
    [goog.object :as gobj]))
 
-(def PIXIApplication (.-Application js/PIXI))
-(def Sprite (.-Sprite js/PIXI))
-(def Assets (.-Assets js/PIXI))
-(def Graphics (.-Graphics js/PIXI))
+(def PIXIApplication (.-Application pixi))
+(def Sprite (.-Sprite pixi))
+(def Assets (.-Assets pixi))
+(def Graphics (.-Graphics pixi))
 
 (defn create-application [config]
   (PIXIApplication. (clj->js config)))
