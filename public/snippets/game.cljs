@@ -15,7 +15,7 @@
 (def ^:dynamic *bird-speed* 0.1)
 (def ^:dynamic *bird-ang-speed* 0.1)
 
-(def sprites {:chickadee "/images/chickadee.png"})
+(def sprites {:chickadee "/cljs-interactive-game-dev/images/chickadee.png"})
 
 (defn sync-sprite!
   "Applies entity state to sprite"
