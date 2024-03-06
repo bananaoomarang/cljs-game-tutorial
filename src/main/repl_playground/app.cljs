@@ -11,16 +11,10 @@
    ["react-dom/client" :refer [createRoot]]
    ["codemirror" :as code-mirror]))
 
-(defonce !eval-ready? (r/atom false))
+(defonce eval-ready? (r/atom false))
 (def compiling (r/atom false))
 (def code (r/atom "(+ 1 1)"))
 (def code-result (r/atom ""))
-(def current-snippet (r/atom 2))
-
-(def snippets
-  [{:path "1" :ns "pixi-tutorial-1.game"}
-   {:path "2" :ns "pixi-tutorial-2.game"}
-   {:path "game" :ns "pixi-tutorial-final.game"}])
 
 (defn handle-eval [result]
   (println result)
@@ -36,7 +30,10 @@
     (reset! code value)
     
     ;; ns option doesn't seem to work so :/
-    (compile (str "(ns pixi-tutorial-final.game)" @code))))
+    (compile
+     (str
+      "(ns pixi-tutorial-final.game (:require [pixi-engine.wrapper :as game]))"
+      @code))))
 
 (defn clear-pixi! []
   (set! (.-innerHTML (gdom/getElement "pixi-app")) ""))
@@ -45,6 +42,7 @@
   (code-mirror node
                (clj->js {:value val
                          :theme "dracula"
+                         :lineNumbers true
                          :mode "clojure"})))
 
 (defn update-editor-value [mirror val]
@@ -79,7 +77,7 @@
       (fn []
         [:div
          [:div.editor {:ref #(reset! root-ref %)}]
-         [:button {:class "btn" :on-click #(update-result @mirror)} "Eval 😈"]])})))
+         [:button {:class "btn" :on-click #(update-result @mirror) :disabled (not eval-ready?)} "Eval 😈"]])})))
 
 (defn result []
   [:div
@@ -90,8 +88,11 @@
 (defn main-editor [snippet]
   [:div.row-wrapper
    [:div.main-editor
+    [:h1 "Game source code"]
     [editor (:path snippet)]]
-   [:div {:id "pixi-app" :class "canvas"}]])
+   [:div
+    [:h1 "Game"]
+    [:div.canvas {:id "pixi-app"}]]])
 
 (defn mini-editor [snippet title]
   [:div.mini-editor
@@ -100,16 +101,18 @@
 
 (defn app []
   [:div
-   [main-editor (nth snippets @current-snippet)]
+   [main-editor {:path "game"}]
+   [:h1 "Examples"]
    [:div.mini-editors
-    [mini-editor "clear-bullets" "Clear bullets"]]
-   [result]
-   [:h1 (str "Eval ready: " @!eval-ready?)]])
+    [mini-editor "stop-bird" "Stop Bird"]
+    [mini-editor "change-bg" "Change Background Color"]
+    [mini-editor "clear-bullets" "Clear Bullets"]]
+   [result]])
 
 (defonce root (createRoot (gdom/getElement "root")))
 
 (defn init []
-  (repl/init !eval-ready?)
+  (repl/init eval-ready?)
   (.render root (r/as-element [app])))
 
 (defn ^:dev/after-load re-render
