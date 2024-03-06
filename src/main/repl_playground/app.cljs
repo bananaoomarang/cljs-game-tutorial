@@ -79,11 +79,9 @@
          [:div.editor {:ref #(reset! root-ref %)}]
          [:button {:class "btn" :on-click #(update-result @mirror) :disabled (not eval-ready?)} "Eval 😈"]])})))
 
-(defn result []
-  [:div
-   (if @compiling
-     [:div {:class "compiling-msg"} "Compiling…"]
-     [:div {:class "compile-result"} (str "Last eval result: " @code-result)])])
+(defn status-lad []
+  [:div.status {:class (if @compiling ["status" "show"] "status")}
+   [:span "Compiling..."]])
 
 (defn main-editor [snippet]
   [:div.row-wrapper
@@ -101,13 +99,17 @@
 
 (defn app []
   [:div
-   [main-editor {:path "game"}]
-   [:h1 "Examples"]
-   [:div.mini-editors
-    [mini-editor "stop-bird" "Stop Bird"]
-    [mini-editor "change-bg" "Change Background Color"]
-    [mini-editor "clear-bullets" "Clear Bullets"]]
-   [result]])
+   [status-lad]
+   [:div.section
+    [:div.content
+     [main-editor {:path "game"}]]]
+   [:div.section
+    [:div.content
+     [:h1 "Examples"]
+     [:div.examples
+      [mini-editor "stop-bird" "Stop Bird"]
+      [mini-editor "change-bg" "Change Background Color"]
+      [mini-editor "clear-bullets" "Clear Bullets"]]]]])
 
 (defonce root (createRoot (gdom/getElement "root")))
 

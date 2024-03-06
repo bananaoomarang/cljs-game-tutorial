@@ -1,8 +1,41 @@
+:root {
+  --white: #fff;
+  --black: #1e1d1a;
+  --near-white: #f4f4f4;
+  --dracula-bg: #282a36;
+  --dracula-pink: #bd93f9;
+  --dracula-green: #50fa7b;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+  font-family: Lora;
+  background-color: var(--white);
+  line-height: 1.25;
+  color: var(--black);
+}
+
 #root {
-    margin: 0 auto;
-    padding: 1rem;
-    max-width: 80rem;
-    font-family: Lora;
+    padding: 0;
+}
+
+.section {
+  width: 100%;
+}
+
+.section:nth-child(odd) {
+  background-color: var(--near-white);
+}
+
+.content {
+  margin: 0 auto;
+  max-width: 80rem;
+  padding: 1rem;
 }
 
 .main-editor {
@@ -11,7 +44,7 @@
   max-width: 100%;
 }
 
-.mini-editors {
+.examples {
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 1rem;
@@ -25,12 +58,20 @@
   width: 100%;
 }
 
-.compiling-msg {
-    color: #ccc;
+.status {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease-in-out;
+  font-size: 2rem;
+  background-color: var(--dracula-bg);
+  border-radius: 0 0 8px 0;
+  padding: 0.5rem 1rem;
+  color: var(--white);
 }
 
-.compile-result {
-    color: #111;
+.status.show {
+  opacity: 1;
 }
 
 .row-wrapper {
@@ -38,6 +79,7 @@
   flex-direction: column;
   align-items: center;
   grid-gap: 1rem;
+  padding: 1rem;
 
   @media (min-width: 50rem) {
     grid-template-columns: 2fr 1fr;
@@ -53,7 +95,7 @@
 .canvas {
   width: 400px;
   height: 400px;
-  border: 4px solid #ccc;
+  border: 4px solid var(--black);
 
   @media (min-width: 50rem) {
     margin-left: auto;
@@ -61,24 +103,26 @@
 }
 
 .btn {
-    background: none;
-    border: 2px solid #111;
-    border-top: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-    cursor: pointer;
-    outline: none;
-    padding: 0.5rem 1rem;
-    transition: all 200ms ease-in-out;
+  background: none;
+  border: 3px solid #282a36;
+  border-top: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  transition: all 200ms ease-in-out;
+  font-family: monospace;
 }
 
 .btn::-moz-focus-inner {
   border: 0;
 }
 
-.btn:hover, .btn:focus {
+.btn:hover,
+.btn:active {
     outline: none;
-    background-color: #ccc;
+    background-color: #6D8A88;
 }
 
 .btn:disabled {
