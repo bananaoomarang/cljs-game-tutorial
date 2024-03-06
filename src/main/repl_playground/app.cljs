@@ -100,16 +100,17 @@
 (defn app []
   [:div
    [status-lad]
-   [:div.section
-    [:div.content
-     [main-editor {:path "game"}]]]
-   [:div.section
-    [:div.content
-     [:h1 "Examples"]
-     [:div.examples
-      [mini-editor "stop-bird" "Stop Bird"]
-      [mini-editor "change-bg" "Change Background Color"]
-      [mini-editor "clear-bullets" "Clear Bullets"]]]]])
+   [:div
+    [:div.section
+     [:div.content
+      [main-editor {:path "game"}]]]
+    [:div.section
+     [:div.content
+      [:h1 "Examples"]
+      [:div.examples
+       [mini-editor "stop-bird" "Stop Bird"]
+       [mini-editor "change-bg" "Change Background Color"]
+       [mini-editor "clear-bullets" "Clear Bullets"]]]]]])
 
 (defonce root (createRoot (gdom/getElement "root")))
 
