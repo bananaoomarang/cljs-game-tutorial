@@ -1,8 +1,10 @@
 # Clojurescript interactive game maker [WIP!] #
 
-Experiment with self hosting CLJS code in the browser for interactive docs e.t.c.
+Experiment with self hosting CLJS code in the browser for interactive docs, development tutorials e.t.c.
 
 ![App Demo](demo.gif)
+
+The Clojurescript is fully bootstrapped/compiled/run in the browser, which allows re-evaluating code as the application is running similar to ordinary REPL-driven Clojure(script) development.
 
 Accessible at: https://bananaoomarang.github.io/cljs-interactive-game-dev/
 
