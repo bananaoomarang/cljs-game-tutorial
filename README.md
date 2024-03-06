@@ -8,6 +8,8 @@ The Clojurescript is fully bootstrapped/compiled/run in the browser, which allow
 
 Accessible at: https://bananaoomarang.github.io/cljs-interactive-game-dev/
 
+Inspired by Guile Scheme game engine [Chickadee](https://dthompson.us/projects/chickadee.html), hence the bird.
+
 ### Running Locally ###
 
 ```
