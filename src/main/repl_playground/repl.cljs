@@ -4,6 +4,8 @@
    [cljs.env :as env]
    [shadow.cljs.bootstrap.browser :as boot]))
 
+(goog-define PATH-PREFIX "")
+
 (set! cljs.js/*eval-fn* cljs.js/js-eval)
 (def comp-state (env/default-compiler-env))
 
@@ -17,8 +19,10 @@
       :ns ns}
      handle-eval)))
 
+(println (str PATH-PREFIX "/js/bootstrap"))
+
 (defn init [!eval-ready?]
   (boot/init comp-state
-             {:path "/js/bootstrap"
+             {:path (str PATH-PREFIX "/js/bootstrap")
               :load-on-init '#{shadow-eval.user}}
              #(reset! !eval-ready? true)))

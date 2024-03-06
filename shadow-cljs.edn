@@ -16,9 +16,13 @@
               :entries [cljs.js
                         pixi-engine.core
                         pixi-engine.wrapper]
-              :exclude #{cljs.js}}
-  :frontend
-  {:target :browser
-   :compiler-options {:optimizations :simple
-                      :output-wrapper false}
-   :modules {:main {:init-fn repl-playground.app/init}}}}}
+              :exclude #{cljs.js}
+
+              :release {:output-dir "public/cljs-interactive-game-dev/js/bootstrap"}}
+  :frontend {:target :browser
+             :output-dir "public/js"
+             :compiler-options {:optimizations :simple
+                                :output-wrapper false}
+             :modules {:main {:init-fn repl-playground.app/init}}
+             :release {:output-dir "public/cljs-interactive-game-dev/js"
+                       :closure-defines {repl-playground.repl/PATH-PREFIX "/cljs-interactive-game-dev"}}}}}
