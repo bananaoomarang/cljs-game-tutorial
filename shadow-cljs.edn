@@ -12,10 +12,13 @@
  :builds
  {:bootstrap {:target :bootstrap
               :output-dir "public/js/bootstrap"
+              
               :entries [cljs.js
                         pixi-engine.core
                         pixi-engine.wrapper]
               :exclude #{cljs.js}}
   :frontend
   {:target :browser
+   :compiler-options {:optimizations :simple
+                      :output-wrapper false}
    :modules {:main {:init-fn repl-playground.app/init}}}}}
