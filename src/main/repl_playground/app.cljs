@@ -56,7 +56,7 @@
 (defn editor [snippet-name]
   (let [root-ref (atom nil)
         mirror (atom nil)
-        snippet-path (str "/snippets/" snippet-name ".cljs")]
+        snippet-path (str repl/PATH-PREFIX "/snippets/" snippet-name ".cljs")]
     (r/create-class
      {:display-name "editor"
 

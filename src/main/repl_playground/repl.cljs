@@ -19,8 +19,6 @@
       :ns ns}
      handle-eval)))
 
-(println (str PATH-PREFIX "/js/bootstrap"))
-
 (defn init [!eval-ready?]
   (boot/init comp-state
              {:path (str PATH-PREFIX "/js/bootstrap")
